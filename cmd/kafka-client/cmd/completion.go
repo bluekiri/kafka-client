@@ -99,15 +99,15 @@ func colonWorkarround(args []string) []string {
 func completeProtoFile(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	// Find all regular files in import-path directories
 	files := make([]string, 0)
-	for _, importPath := range viper.GetStringSlice(importPath) {
+		for _, importPath := range viper.GetStringSlice(importPath) {
 		dirEntries, _ := os.ReadDir(importPath)
 		for _, dirEntry := range dirEntries {
-			if dirEntry.Type().IsRegular() {
+			if dirEntry.Type().IsRegular() && strings.HasSuffix(dirEntry.Name(), ".proto"){
 				files = append(files, dirEntry.Name())
 			}
 		}
 	}
-	return sliceutils.FilterSlice(files, sliceutils.SuffixFilter(".proto").And(sliceutils.PrefixFilter(toComplete))), cobra.ShellCompDirectiveNoFileComp
+	return sliceutils.FilterSlice(files, sliceutils.PrefixFilter(toComplete)), cobra.ShellCompDirectiveNoFileComp
 }
 
 func completeProto(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
