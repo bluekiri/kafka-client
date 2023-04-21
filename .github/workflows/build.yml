@@ -10,6 +10,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [linux, windows]
+        arch: [amd64]
+
     steps:
     - uses: actions/checkout@v3
 
@@ -19,7 +24,7 @@ jobs:
         go-version-file: go.mod
 
     - name: Build
-      run: go build -v ./...
+      run: GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go build -v ./...
 
     - name: Test
-      run: go test -v ./...
+      run: GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go test -v ./...
