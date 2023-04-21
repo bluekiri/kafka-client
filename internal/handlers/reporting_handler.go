@@ -50,7 +50,7 @@ func (handler *reportingHandler) run() error {
 		defer close(done)
 
 		// Get the reporting ticker
-		var tickerChan <-chan time.Time;
+		var tickerChan <-chan time.Time
 		if handler.period > 0 {
 			ticker := time.NewTicker(handler.period)
 			defer ticker.Stop()
@@ -77,7 +77,6 @@ func (handler *reportingHandler) run() error {
 				prevSuccesses = successes
 			}
 		}
-		handler.logger.Printf("total processed messages: %d\n", successes)
 	}()
 
 	// Start the aggregating goroutines
