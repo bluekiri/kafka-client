@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/bluekiri/kafka-client/internal/formatters"
 	"github.com/bluekiri/kafka-client/internal/sliceutils"
@@ -149,6 +150,11 @@ func completeTopic(cmd *cobra.Command, args []string, toComplete string) ([]stri
 	// Get the Kafka client
 	clientID := viper.GetString(clientID)
 	config := sarama.NewConfig()
+	config.Net.DialTimeout = 500 * time.Millisecond
+	config.Net.ReadTimeout = 500 * time.Millisecond
+	config.Net.WriteTimeout = 500 * time.Millisecond
+	config.Metadata.Timeout = 500 * time.Millisecond
+	config.Metadata.Retry.Max = 0
 	config.ClientID = clientID
 
 	cobra.CompDebugln("Connecting to Kafka cluster", true)
@@ -163,20 +169,14 @@ func completeTopic(cmd *cobra.Command, args []string, toComplete string) ([]stri
 	defer client.Close()
 
 	cobra.CompDebugln("Getting topics", true)
-	// Get the available topics
 	availableTopics, err := client.Topics()
 	if err != nil {
 		cobra.CompErrorln(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 
-	cobra.CompDebugln("Filtering topics topics", true)
-	// Filter topics
-	filter := notInternalTopics
-	if toComplete != "" {
-		filter = filter.And(sliceutils.PrefixFilter(toComplete))
-	}
-
+	cobra.CompDebugln("Filtering topics", true)
+	filter := notInternalTopics.And(sliceutils.PrefixFilter(toComplete))
 	return sliceutils.FilterSlice(availableTopics, filter), cobra.ShellCompDirectiveDefault
 }
 
