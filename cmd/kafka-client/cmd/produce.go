@@ -59,6 +59,7 @@ func init() {
 
 	viper.BindPFlag(importPath, produceCmd.Flags().Lookup(importPath))
 	viper.BindPFlag(protoFile, produceCmd.Flags().Lookup(protoFile))
+	viper.BindPFlag(period, produceCmd.Flags().Lookup(period))
 }
 
 func produce(cmd *cobra.Command, args []string) error {

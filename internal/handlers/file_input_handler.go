@@ -7,6 +7,8 @@ package handlers
 
 import (
 	"context"
+	"errors"
+	"io"
 
 	"github.com/bluekiri/kafka-client/internal/dto"
 	"github.com/bluekiri/kafka-client/internal/errorutils"
@@ -50,7 +52,9 @@ func (handler *fileInputHandler) run() error {
 				// Read the message
 				message, err := handler.reader.Read()
 				if err != nil {
-					handler.progress <- err
+					if !errors.Is(err, io.EOF) {
+						handler.progress <- err
+					}
 					return
 				}
 

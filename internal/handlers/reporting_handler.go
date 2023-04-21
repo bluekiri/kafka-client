@@ -77,6 +77,7 @@ func (handler *reportingHandler) run() error {
 				prevSuccesses = successes
 			}
 		}
+		handler.logger.Printf("total messages processed: %d\n", successes)
 	}()
 
 	// Start the aggregating goroutines
