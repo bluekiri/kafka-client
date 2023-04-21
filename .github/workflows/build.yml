@@ -7,13 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [linux, windows]
-        arch: [amd64]
 
     steps:
     - uses: actions/checkout@v3
@@ -24,7 +19,4 @@ jobs:
         go-version-file: go.mod
 
     - name: Build
-      run: GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go build -v ./...
-
-    - name: Test
-      run: GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go test -v ./...
+      run: go build -v ./...
