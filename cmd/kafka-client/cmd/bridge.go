@@ -22,11 +22,11 @@ import (
 
 const (
 	bridgeExample = "kafka-client bridge localhost:9092 from_topic localhost:9092 to_topic"
-	bridgeShort   = "Bridges messages from a Kafka topic to another Kafka topic"
+	bridgeShort   = "Bridges messages from a Kafka topic to another Kafka topic."
 	bridgeLong    = `bridge command consumes messages from from_topic, using from_bootstrap_servers
 to get the brokers of the source Kafka cluster, and produces those messages to
 to_topic, using to_bootstrap_servers to get the brokers of the destination
-Kafka cluster`
+Kafka cluster.`
 )
 
 // bridgeCmd represents the bridge command
@@ -42,7 +42,7 @@ var bridgeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(bridgeCmd)
-	bridgeCmd.Flags().DurationP(period, "p", 0, "time to wait between producing two messages")
+	bridgeCmd.Flags().DurationP(period, "p", 0, "time to wait between producing two messages.")
 
 	viper.BindPFlag(period, bridgeCmd.Flags().Lookup(period))
 }

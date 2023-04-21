@@ -28,9 +28,8 @@ var (
 
 const (
 	rootShort = "Command line client for Kafka"
-	rootLong  = `Command line Kafka consumer and producer which can be used to
-save raw messages to a file or display protobuf messages in JSON
-representation.`
+	rootLong  = `Command line Kafka consumer and producer which can be used to save raw messages to
+a file or display protobuf messages in JSON representation.`
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -87,9 +86,7 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		logger.Println("Using config file:", viper.ConfigFileUsed())
-	}
+	viper.ReadInConfig()
 }
 
 func interruptableContext(parent context.Context, timeout time.Duration) context.Context {

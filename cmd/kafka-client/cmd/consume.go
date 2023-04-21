@@ -22,10 +22,10 @@ import (
 
 const (
 	consumeExample = "kafka-client consume localhost:9092 my_topic"
-	consumeShort   = "Consumes messages from a Kafka topic"
-	consumeLong    = `consume command uses bootstrap_servers to get the brokers of the Kafka
-cluster and consume messages from the indicated topic printing them to stdout
-unless a filename is provided by the --output flag .`
+	consumeShort   = "Consumes messages from a Kafka topic."
+	consumeLong    = `consume command uses bootstrap_servers to get the brokers of the Kafka cluster
+and consume messages from the indicated topic printing them to stdout unless a
+filename is provided by the --output flag.`
 )
 
 // consumeCmd represents the consume command
@@ -42,13 +42,13 @@ var consumeCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(consumeCmd)
 
-	consumeCmd.Flags().StringP(output, "o", "", "write to file instead of stdout")
-	consumeCmd.Flags().BoolP(formatRaw, "r", false, "write the message as raw bytes (default true if an output file is given)")
-	consumeCmd.Flags().BoolP(formatText, "t", false, "write the message as text (default true if no output file is given)")
-	consumeCmd.Flags().String(formatProto, "", "write the message as JSON using the given protobuf message type")
+	consumeCmd.Flags().StringP(output, "o", "", "write to file instead of stdout.")
+	consumeCmd.Flags().BoolP(formatRaw, "r", false, "write the message as raw bytes (default true if an output file is given).")
+	consumeCmd.Flags().BoolP(formatText, "t", false, "write the message as text (default true if no output file is given).")
+	consumeCmd.Flags().String(formatProto, "", "write the message as JSON using the given protobuf message type.")
 
-	consumeCmd.Flags().StringSlice(importPath, []string{"."}, "directory from which proto sources can be imported (default to current path)")
-	consumeCmd.Flags().StringSlice(protoFile, []string{}, "the name of a proto source file. Imports will be resolved using the given --import-path flags. Multiple proto files can be specified by specifying multiple --proto-file flags.")
+	consumeCmd.Flags().StringSlice(importPath, []string{"."}, "directory from which proto sources can be imported.")
+	consumeCmd.Flags().StringSlice(protoFile, []string{"*.proto"}, "the name of a proto source file. Imports will be resolved using the given --import-path flags. Multiple proto files can be specified by specifying multiple --proto-file flags.")
 
 	consumeCmd.MarkFlagDirname(importPath)
 	consumeCmd.RegisterFlagCompletionFunc(protoFile, completeProtoFile)
