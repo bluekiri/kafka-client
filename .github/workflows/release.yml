@@ -27,6 +27,7 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         goversion: "go.mod"
+        project_path: "cmd/kafka-client"
         binary_name: "kafka-client"
         extra_files: LICENSE README.md
         md5sum: true
