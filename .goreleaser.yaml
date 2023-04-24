@@ -15,6 +15,14 @@ builds:
       - linux
       - windows
       - darwin
+    hooks:
+      post:
+        - upx "{{ .Path }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
+    mod_timestamp: '{{ .CommitTimestamp }}'
 
 archives:
   - format: tar.gz
