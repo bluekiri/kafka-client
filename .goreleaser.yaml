@@ -24,7 +24,10 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
+      - -s -w
+      - -X github.com/bluekiri/kafka-client/cmd/kafka-client/cmd.version={{.Version}} 
+      - -X github.com/bluekiri/kafka-client/cmd/kafka-client/cmd.commit={{.Commit}}
+      - -X github.com/bluekiri/kafka-client/cmd/kafka-client/cmd.date={{ .CommitDate }}
     mod_timestamp: '{{ .CommitTimestamp }}'
 
 archives:

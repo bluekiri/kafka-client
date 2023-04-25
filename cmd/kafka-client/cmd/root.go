@@ -16,15 +16,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/spf13/cobra"
-
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
 	cfgFile string
 	logger  = log.New(os.Stderr, "", log.LstdFlags)
+
+    version = "dev"
+    commit  = "none"
+    date    = "unknown"
 )
 
 const (
@@ -39,9 +42,7 @@ var rootCmd = &cobra.Command{
 	Short:         rootShort,
 	Long:          rootLong,
 	SilenceErrors: true,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Version:       fmt.Sprintf("%s (%s) compiled at %s", version, commit, date),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
