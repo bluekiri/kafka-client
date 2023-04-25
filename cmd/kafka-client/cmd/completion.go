@@ -6,6 +6,7 @@ This file is part of kafka-client.
 package cmd
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -44,6 +45,8 @@ var (
 func init() {
 	rootCmd.AddCommand(newCompletionCmd())
 }
+
+type CompleteFunc func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective)
 
 func newCompletionCmd() *cobra.Command {
 	shells := make([]string, 0, len(completionShells))
@@ -96,27 +99,53 @@ func colonWorkarround(args []string) []string {
 	return normArgs
 }
 
+func wrapCompletion(completion CompleteFunc, wrappers ...func(cmd *cobra.Command) error) CompleteFunc {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		for _, wrapper := range wrappers {
+			if err := wrapper(cmd); err != nil {
+				cobra.CompErrorln(err.Error())
+				return nil, cobra.ShellCompDirectiveError
+			}
+		}
+		return completion(cmd, args, toComplete)
+	}
+}
+
 func completeProtoFile(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	importPath := viper.GetStringSlice(importPath)
+	cobra.CompDebugln(fmt.Sprintf("using import-path: %s", strings.Join(importPath, ", ")), true)
+
 	// Find all regular files in import-path directories
 	files := make([]string, 0)
-		for _, importPath := range viper.GetStringSlice(importPath) {
+	for _, importPath := range importPath {
 		dirEntries, _ := os.ReadDir(importPath)
 		for _, dirEntry := range dirEntries {
-			if dirEntry.Type().IsRegular() && strings.HasSuffix(dirEntry.Name(), ".proto"){
+			if dirEntry.Type().IsRegular() && strings.HasSuffix(dirEntry.Name(), ".proto") {
 				files = append(files, dirEntry.Name())
 			}
 		}
 	}
+	cobra.CompDebugln(fmt.Sprintf("found protobuffer files: %s", strings.Join(files, ", ")), true)
 	return sliceutils.FilterSlice(files, sliceutils.PrefixFilter(toComplete)), cobra.ShellCompDirectiveNoFileComp
 }
 
 func completeProto(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	protoFile := viper.GetStringSlice(protoFile)
+	viper.BindPFlag(importPath, cmd.Flags().Lookup(importPath))
+	viper.BindPFlag(protoFile, cmd.Flags().Lookup(protoFile))
 
-	protoMessageTypes, err := formatters.ProtoMessageTypes(cmd.Context(), protoFile, viper.GetStringSlice(importPath))
+	importPath := viper.GetStringSlice(importPath)
+	cobra.CompDebugln(fmt.Sprintf("using import-path: %s", strings.Join(importPath, ", ")), true)
+	
+	protoFile := viper.GetStringSlice(protoFile)
+	cobra.CompDebugln(fmt.Sprintf("using proto-file: %s", strings.Join(protoFile, ", ")), true)
+
+	protoMessageTypes, err := formatters.ProtoMessageTypes(cmd.Context(), protoFile, importPath)
 	if err != nil {
+		cobra.CompErrorln(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
+	cobra.CompDebugln(fmt.Sprintf("found protobuffer messages: %s", strings.Join(protoMessageTypes, ", ")), true)
+
 	return sliceutils.FilterSlice(protoMessageTypes, sliceutils.PrefixFilter(toComplete)), cobra.ShellCompDirectiveDefault
 }
 

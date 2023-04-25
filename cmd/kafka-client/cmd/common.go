@@ -14,6 +14,28 @@ import (
 	"github.com/spf13/viper"
 )
 
+func bindFlags(cmd *cobra.Command) error {
+	if err := viper.BindPFlag(importPath, cmd.Flags().Lookup(importPath)); err != nil {
+		return err
+	}
+	return viper.BindPFlag(protoFile, cmd.Flags().Lookup(protoFile))
+}
+
+func addFormatFlags(cmd *cobra.Command) {
+	cmd.Flags().BoolP(formatRaw, "r", false, "write the message as raw bytes (default true if an output file is given).")
+	cmd.Flags().BoolP(formatText, "t", false, "write the message as text (default true if no output file is given).")
+	cmd.Flags().String(formatProto, "", "write the message as JSON using the given protobuf message type.")
+
+	cmd.Flags().StringSlice(importPath, []string{"."}, "directory from which proto sources can be imported.")
+	cmd.Flags().StringSlice(protoFile, []string{"*.proto"}, "the name of a proto source file. Imports will be resolved using the given --import-path flags. Multiple proto files can be specified by specifying multiple --proto-file flags.")
+
+	cmd.MarkFlagDirname(importPath)
+	cmd.RegisterFlagCompletionFunc(protoFile, wrapCompletion(completeProtoFile, bindFlags))
+	cmd.RegisterFlagCompletionFunc(formatProto, wrapCompletion(completeProto, bindFlags))
+
+	bindFlags(cmd)
+}
+
 func getFormatter(cmd *cobra.Command, filename string) (formatters.Formatter, error) {
 	raw, _ := cmd.Flags().GetBool(formatRaw)
 	text, _ := cmd.Flags().GetBool(formatText)

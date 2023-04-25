@@ -44,22 +44,12 @@ func init() {
 	rootCmd.AddCommand(produceCmd)
 
 	produceCmd.Flags().StringP(input, "i", "", "read from file instead of stdin.")
-	produceCmd.Flags().BoolP(formatRaw, "r", false, "read the message as raw bytes (default true if an input file is given).")
-	produceCmd.Flags().BoolP(formatText, "t", false, "read the message as text (default true if no input file is given).")
-	produceCmd.Flags().String(formatProto, "", "read the message as JSON using the given protobuf message type.")
-	produceCmd.Flags().DurationP(period, "p", 0, "time to wait between producing two messages.")
-
-	produceCmd.Flags().StringSlice(importPath, []string{"."}, "directory from which proto sources can be imported.")
-	produceCmd.Flags().StringSlice(protoFile, []string{"*.proto"}, "the name of a proto source file. Imports will be resolved using the given --import-path flags. Multiple proto files can be specified by specifying multiple --proto-file flags.")
-
-	produceCmd.MarkFlagDirname(importPath)
-	produceCmd.RegisterFlagCompletionFunc(protoFile, completeProtoFile)
-	produceCmd.RegisterFlagCompletionFunc(formatProto, completeProto)
 	produceCmd.MarkFlagFilename(input)
 
-	viper.BindPFlag(importPath, produceCmd.Flags().Lookup(importPath))
-	viper.BindPFlag(protoFile, produceCmd.Flags().Lookup(protoFile))
+	produceCmd.Flags().DurationP(period, "p", 0, "time to wait between producing two messages.")
 	viper.BindPFlag(period, produceCmd.Flags().Lookup(period))
+
+	addFormatFlags(produceCmd)
 }
 
 func produce(cmd *cobra.Command, args []string) error {

@@ -31,7 +31,7 @@ Kafka cluster.`
 
 // bridgeCmd represents the bridge command
 var bridgeCmd = &cobra.Command{
-	Use:               "bridge",
+	Use:               "bridge source_bootstrap_servers source_topic destination_bootstrap_servers destination_topic",
 	Short:             bridgeShort,
 	Long:              bridgeLong,
 	Example:           bridgeExample,
@@ -42,8 +42,8 @@ var bridgeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(bridgeCmd)
+	
 	bridgeCmd.Flags().DurationP(period, "p", 0, "time to wait between producing two messages.")
-
 	viper.BindPFlag(period, bridgeCmd.Flags().Lookup(period))
 }
 

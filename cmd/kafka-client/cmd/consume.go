@@ -43,20 +43,9 @@ func init() {
 	rootCmd.AddCommand(consumeCmd)
 
 	consumeCmd.Flags().StringP(output, "o", "", "write to file instead of stdout.")
-	consumeCmd.Flags().BoolP(formatRaw, "r", false, "write the message as raw bytes (default true if an output file is given).")
-	consumeCmd.Flags().BoolP(formatText, "t", false, "write the message as text (default true if no output file is given).")
-	consumeCmd.Flags().String(formatProto, "", "write the message as JSON using the given protobuf message type.")
-
-	consumeCmd.Flags().StringSlice(importPath, []string{"."}, "directory from which proto sources can be imported.")
-	consumeCmd.Flags().StringSlice(protoFile, []string{"*.proto"}, "the name of a proto source file. Imports will be resolved using the given --import-path flags. Multiple proto files can be specified by specifying multiple --proto-file flags.")
-
-	consumeCmd.MarkFlagDirname(importPath)
-	consumeCmd.RegisterFlagCompletionFunc(protoFile, completeProtoFile)
-	consumeCmd.RegisterFlagCompletionFunc(formatProto, completeProto)
 	consumeCmd.MarkFlagFilename(output)
 
-	viper.BindPFlag(importPath, consumeCmd.Flags().Lookup(importPath))
-	viper.BindPFlag(protoFile, consumeCmd.Flags().Lookup(protoFile))
+	addFormatFlags(consumeCmd)
 }
 
 func consume(cmd *cobra.Command, args []string) error {
