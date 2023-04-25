@@ -7,7 +7,6 @@ package cmd
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strings"
 	"time"
@@ -33,50 +32,10 @@ Can be sourced as such
 `
 
 var (
-	completionShells = map[string]func(cmd *cobra.Command, out io.Writer) error{
-		"bash":       runCompletionBash,
-		"zsh":        runCompletionZsh,
-		"powershell": runCompletionPowerShell,
-	}
-
 	notInternalTopics = sliceutils.NotEqual("__consumer_offsets")
 )
 
-func init() {
-	rootCmd.AddCommand(newCompletionCmd())
-}
-
 type CompleteFunc func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective)
-
-func newCompletionCmd() *cobra.Command {
-	shells := make([]string, 0, len(completionShells))
-	for shell := range completionShells {
-		shells = append(shells, shell)
-	}
-
-	cmd := &cobra.Command{
-		Use:       "completion SHELL",
-		Short:     "generate autocompletions script for the specified shell (bash or zsh)",
-		Long:      completionLong,
-		ValidArgs: shells,
-		Args:      cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
-		RunE:      func(cmd *cobra.Command, args []string) error { return completionShells[args[0]](cmd, os.Stdout) },
-	}
-
-	return cmd
-}
-
-func runCompletionBash(cmd *cobra.Command, out io.Writer) error {
-	return cmd.Root().GenBashCompletionV2(out, true)
-}
-
-func runCompletionZsh(cmd *cobra.Command, out io.Writer) error {
-	return cmd.Root().GenZshCompletion(out)
-}
-
-func runCompletionPowerShell(cmd *cobra.Command, out io.Writer) error {
-	return cmd.Root().GenPowerShellCompletionWithDesc(out)
-}
 
 func colonWorkarround(args []string) []string {
 	if len(args) < 2 {
