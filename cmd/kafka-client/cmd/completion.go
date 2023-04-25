@@ -19,18 +19,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const completionLong = `
-Generate autocompletions script for kafka-client for the specified shell (bash or zsh).
-
-This command can generate shell autocompletions. e.g.
-
-    $ kafka-client completion bash
-
-Can be sourced as such
-
-    $ source <(kafka-client completion bash)
-`
-
 var (
 	notInternalTopics = sliceutils.NotEqual("__consumer_offsets")
 )
