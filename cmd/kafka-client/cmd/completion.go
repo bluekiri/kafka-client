@@ -94,7 +94,7 @@ func completeProto(cmd *cobra.Command, args []string, toComplete string) ([]stri
 
 	importPath := viper.GetStringSlice(importPath)
 	cobra.CompDebugln(fmt.Sprintf("using import-path: %s", strings.Join(importPath, ", ")), true)
-	
+
 	protoFile := viper.GetStringSlice(protoFile)
 	cobra.CompDebugln(fmt.Sprintf("using proto-file: %s", strings.Join(protoFile, ", ")), true)
 

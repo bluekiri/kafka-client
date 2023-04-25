@@ -42,7 +42,7 @@ var bridgeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(bridgeCmd)
-	
+
 	bridgeCmd.Flags().DurationP(period, "p", 0, "time to wait between producing two messages.")
 	viper.BindPFlag(period, bridgeCmd.Flags().Lookup(period))
 }
