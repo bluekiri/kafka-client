@@ -24,10 +24,6 @@ import (
 var (
 	cfgFile string
 	logger  = log.New(os.Stderr, "", log.LstdFlags)
-
-    version = "dev"
-    commit  = "none"
-    date    = "unknown"
 )
 
 const (
@@ -42,7 +38,6 @@ var rootCmd = &cobra.Command{
 	Short:         rootShort,
 	Long:          rootLong,
 	SilenceErrors: true,
-	Version:       version,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -56,9 +51,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	rootCmd.SetVersionTemplate(`{{with .Name}}{{printf "%s " .}}{{end}}{{printf "version %s" .Version}} (` + commit + `) compiled at ` + date + `
-`)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, config, "", "config file (default is $HOME/.kafka-client.yaml)")
 	rootCmd.PersistentFlags().StringP(clientID, "c", "kafka-client", "client ID to sent to Kafka")
