@@ -10,7 +10,9 @@ package errorutils
 type PanicHandler func(interface{})
 
 // NoPanic is a PanicHandler that recovers the panic doing nothing
-var NoPanic = func(interface{}) {}
+var NoPanic = func(interface{}) {
+	// This is a no-op PanicHandler
+}
 
 // RecoverWith executes the funcion f and, if f panics, recovers the execution
 // using the PanicHandler.
