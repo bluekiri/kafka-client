@@ -30,6 +30,7 @@ type reportingHandler struct {
 	sources    []ProgressSource
 	aggregated chan error
 	period     time.Duration
+	done       chan struct{}
 }
 
 func (handler *reportingHandler) Start(source ProgressSource, sources ...ProgressSource) func() error {
@@ -42,43 +43,10 @@ func (handler *reportingHandler) Start(source ProgressSource, sources ...Progres
 
 func (handler *reportingHandler) run() error {
 	// Channel to signal logging gorountine finished
-	done := make(chan struct{})
+	handler.done = make(chan struct{})
 
 	// Start the logging goroutine
-	go func() {
-		// Signal logging goroutine finished
-		defer close(done)
-
-		// Get the reporting ticker
-		var tickerChan <-chan time.Time
-		if handler.period > 0 {
-			ticker := time.NewTicker(handler.period)
-			defer ticker.Stop()
-			tickerChan = ticker.C
-		}
-
-		// Accounting and logging loog
-		successes, errors, prevSuccesses := 0, 0, 0
-	loop:
-		for {
-			select {
-			case err, ok := <-handler.aggregated:
-				if !ok {
-					break loop
-				}
-				if err != nil {
-					handler.logger.Printf("error processing message: %v\n", err)
-					errors++
-				} else {
-					successes++
-				}
-			case <-tickerChan:
-				handler.logger.Printf("messages processed: %d (total: %d | errors: %d)\n", successes-prevSuccesses, successes, errors)
-				prevSuccesses = successes
-			}
-		}
-		handler.logger.Printf("total messages processed: %d\n", successes)
-	}()
+	go handler.reportProgress()
 
 	// Start the aggregating goroutines
 	var g sync.WaitGroup
@@ -98,7 +66,42 @@ func (handler *reportingHandler) run() error {
 	close(handler.aggregated)
 
 	// Wait for the logging goroutine to exit
-	<-done
+	<-handler.done
 
 	return nil
+}
+
+func (handler *reportingHandler) reportProgress() {
+	// Signal logging goroutine finished
+	defer close(handler.done)
+
+	// Get the reporting ticker
+	var tickerChan <-chan time.Time
+	if handler.period > 0 {
+		ticker := time.NewTicker(handler.period)
+		defer ticker.Stop()
+		tickerChan = ticker.C
+	}
+
+	// Accounting and logging loop
+	successes, errors, prevSuccesses := 0, 0, 0
+	for {
+		select {
+		case err, ok := <-handler.aggregated:
+			if !ok {
+				handler.logger.Printf("total messages processed: %d\n", successes)
+				return
+			}
+			if err != nil {
+				handler.logger.Printf("error processing message: %v\n", err)
+				errors++
+			} else {
+				successes++
+			}
+		case <-tickerChan:
+			handler.logger.Printf("messages processed: %d (total: %d | errors: %d)\n", successes-prevSuccesses, successes, errors)
+			prevSuccesses = successes
+		}
+	}
+	
 }
