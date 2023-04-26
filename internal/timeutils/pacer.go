@@ -32,5 +32,7 @@ func NewPacer(period time.Duration) (<-chan time.Time, func()) {
 	// If period is <= 0, mock a ticker with a closed channel
 	tick := make(chan time.Time)
 	close(tick)
-	return tick, func() {}
+	return tick, func() {
+		// there is nothing to stop
+	}
 }
