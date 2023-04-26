@@ -24,7 +24,7 @@ jobs:
         with:
           args:
             -Dsonar.projectKey=toolfactory.visualstudio.com.architecture.kafka-client
-            "-Dsonar.projectName='Architecture - Kafka Client'"
+            -Dsonar.projectName=Architecture-kafka-client
             -Dsonar.organization=logitravel
             -Dsonar.tests=.
             -Dsonar.test.inclusions=**/*_test.go
