@@ -130,6 +130,7 @@ func consume(cmd *cobra.Command, args []string) error {
 		strings.Join(kafkaBrokers, ","), kafkaTopic,
 		logOutput,
 	)
+	logger.Printf("press ctrl-c to exit")
 
 	// Return the error group error
 	return adaptError(g.Wait())

@@ -145,6 +145,7 @@ func produce(cmd *cobra.Command, args []string) error {
 		strings.Join(kafkaBrokers, ","), kafkaTopic,
 		logEvery,
 	)
+	logger.Printf("press ctrl-c to exit")
 
 	// Return the error group error
 	return adaptError(g.Wait())
