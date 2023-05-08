@@ -34,19 +34,19 @@ func FilterSlice(slice []string, filter Filter) []string {
 	return filtered
 }
 
-func NotEqual(s string) Filter {
+func IsNotEqual(s string) Filter {
 	return func(x string) bool {
 		return s != x
 	}
 }
 
-func PrefixFilter(prefix string) Filter {
+func HasPrefix(prefix string) Filter {
 	return func(x string) bool {
 		return strings.HasPrefix(x, prefix)
 	}
 }
 
-func SuffixFilter(prefix string) Filter {
+func HasSuffix(prefix string) Filter {
 	return func(x string) bool {
 		return strings.HasSuffix(x, prefix)
 	}

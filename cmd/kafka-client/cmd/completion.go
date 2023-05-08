@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	notInternalTopics = sliceutils.NotEqual("__consumer_offsets")
+	notInternalTopics = sliceutils.IsNotEqual("__consumer_offsets")
 )
 
 type CompleteFunc func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective)
@@ -73,7 +73,7 @@ func completeProtoFile(cmd *cobra.Command, args []string, toComplete string) ([]
 		}
 	}
 	cobra.CompDebugln(fmt.Sprintf("found protobuffer files: %s", strings.Join(files, ", ")), true)
-	return sliceutils.FilterSlice(files, sliceutils.PrefixFilter(toComplete)), cobra.ShellCompDirectiveNoFileComp
+	return sliceutils.FilterSlice(files, sliceutils.HasPrefix(toComplete)), cobra.ShellCompDirectiveNoFileComp
 }
 
 func completeProto(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -93,7 +93,7 @@ func completeProto(cmd *cobra.Command, args []string, toComplete string) ([]stri
 	}
 	cobra.CompDebugln(fmt.Sprintf("found protobuffer messages: %s", strings.Join(protoMessageTypes, ", ")), true)
 
-	return sliceutils.FilterSlice(protoMessageTypes, sliceutils.PrefixFilter(toComplete)), cobra.ShellCompDirectiveDefault
+	return sliceutils.FilterSlice(protoMessageTypes, sliceutils.HasPrefix(toComplete)), cobra.ShellCompDirectiveDefault
 }
 
 func completeClustersAndTopic(nArgs int) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
@@ -152,7 +152,7 @@ func completeTopic(cmd *cobra.Command, args []string, toComplete string) ([]stri
 	}
 
 	cobra.CompDebugln("Filtering topics", true)
-	filter := notInternalTopics.And(sliceutils.PrefixFilter(toComplete))
+	filter := notInternalTopics.And(sliceutils.HasPrefix(toComplete))
 	return sliceutils.FilterSlice(availableTopics, filter), cobra.ShellCompDirectiveDefault
 }
 
