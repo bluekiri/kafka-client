@@ -7,6 +7,7 @@ package ioutils
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"os"
 )
@@ -21,27 +22,27 @@ func Create(filename string) (io.WriteCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-	writer := bufio.NewWriter(file)
-	closer := func() error {
-		writer.Flush()
-		return file.Close()
+	return newBufferedWriteCloser(file), nil
+}
+
+type bufferedWriteCloser struct {
+	file           *os.File
+	bufferedWriter *bufio.Writer
+}
+
+func newBufferedWriteCloser(file *os.File) *bufferedWriteCloser {
+	return &bufferedWriteCloser{
+		file:           file,
+		bufferedWriter: bufio.NewWriter(file),
 	}
-	writeCloser := NewWriteCloserWrapper(writer, closer)
-	return writeCloser, nil
 }
 
-func NewWriteCloserWrapper(writer io.Writer, closer func() error) io.WriteCloser {
-	return &writeCloserWrapper{
-		Writer: writer,
-		closer: closer,
-	}
+func (brc *bufferedWriteCloser) Write(p []byte) (int, error) {
+	return brc.bufferedWriter.Write(p)
 }
 
-type writeCloserWrapper struct {
-	io.Writer
-	closer func() error
-}
-
-func (wrapper *writeCloserWrapper) Close() error {
-	return wrapper.closer()
+func (brc *bufferedWriteCloser) Close() error {
+	flushErr := brc.bufferedWriter.Flush()
+	closeErr := brc.file.Close()
+	return errors.Join(flushErr, closeErr)
 }

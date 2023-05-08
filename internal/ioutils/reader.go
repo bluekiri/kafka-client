@@ -14,7 +14,7 @@ import (
 func Open(filename string) (io.ReadCloser, error) {
 	if filename == "" {
 		// Avoid trying to close stdin
-		return NewReadCloserWrapper(os.Stdin, func() error { return nil }), nil
+		return io.NopCloser(os.Stdin), nil
 	}
 
 	// If not Stdin, open the filename and return a buffered ReadCloser
@@ -22,22 +22,25 @@ func Open(filename string) (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
-	readCloser := NewReadCloserWrapper(bufio.NewReader(file), file.Close)
-	return readCloser, nil
+	return newBufferedReadCloser(file), nil
 }
 
-func NewReadCloserWrapper(reader io.Reader, closer func() error) io.ReadCloser {
-	return &readCloserWrapper{
-		Reader: reader,
-		closer: closer,
+type bufferedReadCloser struct {
+	file           *os.File
+	bufferedReader *bufio.Reader
+}
+
+func newBufferedReadCloser(file *os.File) *bufferedReadCloser {
+	return &bufferedReadCloser{
+		file: file,
+		bufferedReader: bufio.NewReader(file),
 	}
 }
 
-type readCloserWrapper struct {
-	io.Reader
-	closer func() error
+func (brc *bufferedReadCloser) Read(p []byte) (int, error){
+	return brc.bufferedReader.Read(p)
 }
 
-func (wrapper *readCloserWrapper) Close() error {
-	return wrapper.closer()
+func (brc *bufferedReadCloser) Close() error {
+	return brc.file.Close()
 }
