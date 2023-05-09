@@ -2,6 +2,7 @@ package ioutils_test
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 	"testing"
 
@@ -138,7 +139,20 @@ func TestCreateNonExistingFile(t *testing.T) {
 }
 
 func TestCreateNotAllowedFile(t *testing.T) {
-	var filename = `T:\TestCreateNotAllowedFile.txt`
+	// Create a temporary directory
+	tmpDir, err := os.MkdirTemp("", "TestCreateNotAllowedFile")
+	if err != nil {
+		t.Fatalf("os.MkdirTemp returned the error %v", err)
+	}
+
+	// Make temporary directory read only
+	err = os.Chmod(tmpDir, 0600)
+	if err != nil {
+		t.Fatalf("os.Chmod returned the error %v", err)
+	}
+
+	// Try to create the output file in the readonly directory
+	var filename = path.Join(tmpDir, "TestCreateNotAllowedFile.txt")
 
 	writeCloser, err := ioutils.Create(filename)
 
