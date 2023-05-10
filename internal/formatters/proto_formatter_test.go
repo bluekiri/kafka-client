@@ -79,3 +79,23 @@ func TestProtoFormatter(t *testing.T) {
 		t.Errorf("Expected value '%v' but got '%v'", expectedProtoMessage.Value, actual.Value)
 	}
 }
+
+func TestProtoFormatterReadClosed(t *testing.T) {
+	formatter := formatters.NewProtoFormatter(messageType)
+
+	// Read won't fine a new line
+	_, err := formatter.NewReader(bytes.NewReader([]byte{})).Read()
+	if err == nil {
+		t.Fatal("Read should have failed")
+	}
+}
+
+func TestProtoFormatterReadIllegalJson(t *testing.T) {
+	formatter := formatters.NewProtoFormatter(messageType)
+
+	// Read won't fine a new line
+	_, err := formatter.NewReader(bytes.NewReader([]byte("this is not a JSON string\n"))).Read()
+	if err == nil {
+		t.Fatal("Read should have failed")
+	}
+}
