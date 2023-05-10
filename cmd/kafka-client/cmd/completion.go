@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bluekiri/kafka-client/internal/formatters"
+	"github.com/bluekiri/kafka-client/internal/protoutils"
 	"github.com/bluekiri/kafka-client/internal/sliceutils"
 
 	"github.com/Shopify/sarama"
@@ -86,7 +86,7 @@ func completeProto(cmd *cobra.Command, args []string, toComplete string) ([]stri
 	protoFile := viper.GetStringSlice(protoFile)
 	cobra.CompDebugln(fmt.Sprintf("using proto-file: %s", strings.Join(protoFile, ", ")), true)
 
-	protoMessageTypes, err := formatters.ProtoMessageTypes(cmd.Context(), protoFile, importPath)
+	protoMessageTypes, err := protoutils.ProtoMessageTypes(cmd.Context(), protoFile, importPath)
 	if err != nil {
 		cobra.CompErrorln(err.Error())
 		return nil, cobra.ShellCompDirectiveError

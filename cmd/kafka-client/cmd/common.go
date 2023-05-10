@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/bluekiri/kafka-client/internal/formatters"
+	"github.com/bluekiri/kafka-client/internal/protoutils"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -66,11 +67,18 @@ func getFormatter(cmd *cobra.Command, filename string) (formatters.Formatter, er
 	}
 
 	if len(messageFullName) > 0 {
-		return formatters.NewProtoFormatter(
+		messageType, err := protoutils.ResolveProtoMessageType(
 			cmd.Context(),
 			messageFullName,
 			viper.GetStringSlice(protoFile),
-			viper.GetStringSlice(importPath))
+			viper.GetStringSlice(importPath),
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return formatters.NewProtoFormatter(messageType), nil
 	}
 
 	// If no formatter is requested return raw if filename is given or text otherwise
