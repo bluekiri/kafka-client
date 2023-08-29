@@ -43,7 +43,7 @@ func TestReportingHandler(t *testing.T) {
 				return
 			}
 			if err != nil {
-				t.Error("error reading logged lines")
+				t.Errorf("error reading logged lines: %v", err)
 				return
 			}
 			
