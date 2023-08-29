@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -34,7 +35,10 @@ func TestReportingHandler(t *testing.T) {
 	go handler.Start(source)()
 
 	// Start the goroutine that reads the logged lines
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		bufferedReader := bufio.NewReader(reader)
 		for {
 			line, err := bufferedReader.ReadBytes('\n')
@@ -43,7 +47,7 @@ func TestReportingHandler(t *testing.T) {
 				return
 			}
 			if err != nil {
-				t.Errorf("error reading logged lines: %v", err)
+				t.Errorf("error reading logged lines: %w", err)
 				return
 			}
 			
@@ -93,5 +97,6 @@ func TestReportingHandler(t *testing.T) {
 
 	close(source)
 	writer.Close()
+	wg.Wait()
 	reader.Close()
 }
