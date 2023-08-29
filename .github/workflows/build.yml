@@ -35,8 +35,11 @@ jobs:
 
   sonarcloud:
     name: SonarCloud analysis
+    needs:
+      build
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' }}
+
     permissions:
       pull-requests: read # allows SonarCloud to decorate PRs with analysis results
     
