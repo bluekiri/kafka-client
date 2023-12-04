@@ -4,12 +4,12 @@ go 1.20
 
 require (
 	github.com/Shopify/sarama v1.38.1
-	github.com/bufbuild/protocompile v0.6.0
+	github.com/bufbuild/protocompile v0.7.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.17.0
-	golang.org/x/sync v0.4.0
-	google.golang.org/protobuf v1.31.0
+	golang.org/x/sync v0.5.0
+	google.golang.org/protobuf v1.31.1-0.20231027082548-f4a6c1f6e5c1
 )
 
 require (
