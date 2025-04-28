@@ -14,9 +14,7 @@ builds:
     goos:
       - linux
       - windows
-      - darwin
     goarch:
-      - "386"
       - amd64
     hooks:
       post:
@@ -30,6 +28,14 @@ builds:
       - -X github.com/bluekiri/kafka-client/cmd/kafka-client/cmd.date={{ .CommitDate }}
     mod_timestamp: '{{ .CommitTimestamp }}'
 
+upx:
+  - enabled: true
+    goos:
+      - linux
+      - windows
+    compress: best
+    lzma: true
+    
 archives:
   - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of uname.
