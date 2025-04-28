@@ -10,7 +10,7 @@ import (
 
 	"github.com/bluekiri/kafka-client/internal/dto"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 func NewKafkaOutputHandler(input <-chan *dto.KafkaMessage, pacer <-chan time.Time, client sarama.Client, topic string) (OutputHandler, error) {
