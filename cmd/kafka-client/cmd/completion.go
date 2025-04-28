@@ -14,7 +14,7 @@ import (
 	"github.com/bluekiri/kafka-client/internal/protoutils"
 	"github.com/bluekiri/kafka-client/internal/sliceutils"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

@@ -15,7 +15,7 @@ import (
 	"github.com/bluekiri/kafka-client/internal/sliceutils"
 	"github.com/bluekiri/kafka-client/internal/timeutils"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"

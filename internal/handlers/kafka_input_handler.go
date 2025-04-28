@@ -11,7 +11,7 @@ import (
 
 	"github.com/bluekiri/kafka-client/internal/dto"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"golang.org/x/sync/errgroup"
 )
 
