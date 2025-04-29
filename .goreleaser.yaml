@@ -1,5 +1,11 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
 version: 2
 
 before:
@@ -16,11 +22,13 @@ builds:
     goos:
       - linux
       - windows
+      - darwin
     goarch:
       - amd64
-    hooks:
-      post:
-        - upx "{{ .Path }}"
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
     flags:
       - -trimpath
     ldflags:
@@ -35,12 +43,17 @@ upx:
     goos:
       - linux
       - windows
+      - darwin
     compress: best
     lzma: true
-    
+
+universal_binaries:
+  - replace: true
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+
 archives:
-  - formats: tar.gz
-    # this name template makes the OS and Arch compatible with the results of uname.
+  - formats: [tar.gz]
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -50,13 +63,18 @@ archives:
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
     format_overrides:
-    - goos: windows
-      formats: zip
+      - goos: windows
+        formats: [zip]
 
 release:
   draft: true
   replace_existing_draft: true
   prerelease: auto
+  footer: >-
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
 
 checksum:
   name_template: 'checksums.txt'
@@ -65,10 +83,6 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
 
-# The lines beneath this are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/use them.
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
